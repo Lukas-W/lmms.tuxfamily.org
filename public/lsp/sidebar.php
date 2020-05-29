@@ -37,6 +37,25 @@ switch (GET('action')) {
 	<?php get_categories(); ?>
 	</div>
 
+	<div class="panel panel-custom">
+	<div class="panel-heading">
+	<form action="<?php echo $LSP_URL; ?>" method="post" role="search">
+		<div class="input-group">
+      </span>
+			<input type="text" id="search" name="usersearch" class="form-control" maxlength="64" placeholder="Search Users" />
+			<span class="input-group-btn">
+				<button type="submit" id="ok" name="ok" class="btn btn-default"><span class="fas fa-search"></span></button>
+			</span>
+		</div>
+	</form>
+	</div>
+	<ul class="lsp-categories">
+		<li class="lsp-category"><a href="?account=browse">All users (<?php echo get_user_results_count();?>)</a></li>
+		<li class="lsp-category"><a href="?account=browse&verified=1">Verified (<?php echo get_user_results_count(false,true);?>)</a></li>
+		<li class="lsp-category"><a href="?account=browse&admins=1">Admins (<?php echo get_user_results_count(true);?>)</a></li>
+	</ul>
+	</div>
+
 	<div id="login-panel" class="panel panel-custom">
 		<div class="panel-heading">
 			<h3 class="panel-title">
@@ -84,6 +103,9 @@ switch (GET('action')) {
 				<div class="list-group">
 				<a class="list-group-item" href="?content=add">
 					<span class="fas fa-fw fa-upload"></span>&nbsp;&nbsp;Add file
+				</a>
+				<a class="list-group-item" href="?account=show&user=<?php echo SESSION(); ?>">
+					<span class="fas fa-fw fa-user"></span>&nbsp;&nbsp;My profile
 				</a>
 				<a class="list-group-item" href="?action=browse&user=<?php echo SESSION(); ?>">
 					<span class="far fa-fw fa-copy"></span>&nbsp;&nbsp;My files

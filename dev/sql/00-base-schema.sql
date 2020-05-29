@@ -4,8 +4,10 @@ CREATE TABLE `users` (
   `login` varchar(20) NOT NULL DEFAULT '',
   `password` varchar(40) NOT NULL DEFAULT '',
   `pw` varchar(255) NOT NULL DEFAULT '',
+  `about_me` varchar(1000) DEFAULT NULL,
   `realname` varchar(255) DEFAULT NULL,
   `is_admin` tinyint(1) DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT NULL,
   `loginFailureCount` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=7308 DEFAULT CHARSET=latin1;

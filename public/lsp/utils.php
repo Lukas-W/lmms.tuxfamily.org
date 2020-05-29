@@ -83,6 +83,64 @@ function set_get_post($param, $default = null) {
 }
 
 
+function list_profile_sort_options($additional_html = '') {
+	global $LSP_URL;
+	$sortings = array(
+		'date' => '<span class="fas fa-calendar"></span>&nbsp;DATE',
+		'files' => '<span class="fas fa-calendar"></span>&nbsp;FILES',
+	);
+	
+	// Catch singular/plural
+	switch (sanitize(GET('sort'), true)) {
+		case 'files' : $_GET['sort'] = 'files'; break;
+	}
+	
+	// Get the active sort, or use 'date' if none is defined
+	if (array_key_exists(sanitize(GET('sort'), true), $sortings)) {
+		$_GET['sort'] = sanitize(GET('sort'), true);
+	}
+	
+	// Get the order (asc/desc) 'desc' if none is defined
+	if (!GET_EMPTY('order')) {
+		$order = sanitize(GET('order'), true);
+	} else {
+		$order = null;
+	}
+	
+	if (GET_EMPTY('sort') || !array_key_exists(GET('sort'), $sortings)) {
+		$_GET['sort'] = 'date';
+	}
+
+	// List all sort options
+	echo '<ul class="nav nav-pills lsp-sort">';
+	foreach ($sortings as $s => $v) {
+		if (GET('sort') == $s) {
+			switch ($order) {
+				case 'asc':
+					unset($_GET['order']);
+					$v .= '&nbsp;(<span class="fas fa-long-arrow-alt-up"></span>)';
+					break;
+				case 'desc':
+					// move down
+				default:
+					$_GET['order'] = 'asc';
+					$v .= '&nbsp;(<span class="fas fa-long-arrow-alt-down"></span>)';
+			}
+		} else {
+			// Don't allow order to be defined for other buttons
+			unset($_GET['order']);
+		}
+		echo '<li id="sort-' . strtolower(sanitize($s)) . '" class="' . (GET('sort') == $s ? 'active' : '') . '">';
+		echo '<a href="' . $LSP_URL . '?' . rebuild_url_query('sort', $s) . '">' . $v . '</a></li>';
+	}
+	
+	if ($additional_html != '') {
+		echo '<li style="margin-left: 2em; margin-top:-1em;">' . $additional_html . '</li>';
+	}
+	
+	echo '</ul>';
+}
+
 /*
  * Creates a sort-by tool-bar at the top of the file listing
  * i.e. DATE, DOWNLOADS, RATING
@@ -225,7 +283,7 @@ function get_stars($fid = -1, $href = '#', $enabled = true) {
  * Creates a bread-crumb style title for the table content
  * i.e All Content > Projects > Tutorials
  */
-function create_title($array) {
+function create_title($array,$pTitle='All Content',$url='') {
 	global $LSP_URL;
 	if (!is_array($array)) {
 		$array = array($array);
@@ -236,7 +294,7 @@ function create_title($array) {
 		}
 	}
 	
-	$title = "<a href=\"$LSP_URL\">All Content</a>";
+	$title = "<a href=\"$LSP_URL$url\">$pTitle</a>";
 	foreach ($array as $element) {
 		if (isset($element) && trim($element) != '' && trim($element) != '""' && trim($element) != "()") {
 			$title .= '&nbsp;&nbsp;<span class="fas fa-caret-right lsp-caret-right"></span>&nbsp;&nbsp;';
@@ -274,7 +332,7 @@ function one_element($array) {
 /*
  * Displays a formatted error message in a small dialogue to the right of the sidebar
  */
-function display_message($message, $severity = 'danger', $title = 'Error', $title_array = null, $redirect = null, $counter = 5) {
+function display_message($message, $severity = 'danger', $title = 'Error', $title_array = null, $redirect = null, $counter = 5, $ignoreTitle=false) {
 	
 	switch ($severity) {
 		case 'info': $icon = 'fa-info-circle'; break;
@@ -286,7 +344,9 @@ function display_message($message, $severity = 'danger', $title = 'Error', $titl
 	$icon = '<span class="fas ' . $icon . '"></span>&nbsp;';
 
 	echo '<div class="col-md-9">';
-	create_title(isset($title_array) ? $title_array : $title);
+	if (!$ignoreTitle) {
+		create_title(isset($title_array) ? $title_array : $title);
+	}
 	echo '<div data-redirect="' . (isset($redirect) ? htmlentities($redirect) : '') . '" ' .
 		'class="alert alert-' . $severity . ' text-center"><strong>' . $icon .
 		($title == '' ? '' : "$title:") . '</strong> ' . $message . '</div>';
@@ -297,20 +357,20 @@ function display_message($message, $severity = 'danger', $title = 'Error', $titl
 	echo '</div>';
 }
 
-function display_error($message, $title_array = null, $redirect = null, $counter = 15) {
-	return display_message($message, 'danger', 'Error', $title_array, $redirect, $counter);
+function display_error($message, $title_array = null, $redirect = null, $counter = 15, $ignoreTitle=false) {
+	return display_message($message, 'danger', 'Error', $title_array, $redirect, $counter, $ignoreTitle);
 }
 
-function display_warning($message, $title_array = null, $redirect = null, $counter = 15) {
-	return display_message($message, 'warning', 'Warning', $title_array, $redirect, $counter);
+function display_warning($message, $title_array = null, $redirect = null, $counter = 15, $ignoreTitle=false) {
+	return display_message($message, 'warning', 'Warning', $title_array, $redirect, $counter, $ignoreTitle);
 }
 
-function display_info($message, $title_array = null, $redirect = null, $counter = 5) {
-	return display_message($message, 'info', '', $title_array, $redirect, $counter);
+function display_info($message, $title_array = null, $redirect = null, $counter = 5, $ignoreTitle=false) {
+	return display_message($message, 'info', '', $title_array, $redirect, $counter, $ignoreTitle);
 }
 
-function display_success($message, $title_array = null, $redirect = null, $counter = 5) {
-	return display_message($message, 'success', '', $title_array, $redirect, $counter);
+function display_success($message, $title_array = null, $redirect = null, $counter = 5, $ignoreTitle=false) {
+	return display_message($message, 'success', '', $title_array, $redirect, $counter, $ignoreTitle);
 }
 
 /*

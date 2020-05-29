@@ -63,7 +63,7 @@ define('DBO_TABLES', 'categories,comments,files,filetypes,licenses,ratings,subca
  * Valid root functions to be looped over and processed by index.php. This order is important
  * as a user could potentially key in many functions, but we only want to process one.
  */
-define('POST_FUNCS', 'rate,comment,content,action,search,q,account');
+define('POST_FUNCS', 'rate,comment,content,action,search,usersearch,q,account');
 
 /*
  * MySQL functions allowed to be called around non-specific columns
@@ -202,6 +202,7 @@ function get_latest() {
 			realname,
 			filename,
 			users.login,
+			users.is_verified,
 			categories.name AS category,
 			subcategories.name AS subcategory,
 			insert_date,
@@ -323,23 +324,37 @@ function add_user($login, $realname, $pass, $is_admin = false) {
  /*
   * Update the realname and/or password of the specified user
   */
- function change_user($login, $realname, $password) {
+ function change_user($login, $realname, $password, $aboutme) {
 	$dbh = &get_db();
 	if ($password != '') {
-		$stmt = $dbh->prepare('UPDATE users SET realname=:realname, password=SHA1(:password) WHERE LOWER(login)=LOWER(:login)');
+		$stmt = $dbh->prepare('UPDATE users SET realname=:realname, password=SHA1(:password), about_me=:aboutme WHERE LOWER(login)=LOWER(:login)');
 		debug_out("UPDATE users SET realname=$realname, password=SHA1($password) WHERE LOWER(login)=LOWER($login)");
 		$stmt->bindParam(':realname', $realname);
+		$stmt->bindParam(':aboutme', $aboutme);
 		$stmt->bindParam(':password', $password);
 		$stmt->bindParam(':login', $login);
 	} else {
-		$stmt = $dbh->prepare('UPDATE users SET realname=:realname WHERE LOWER(login)=LOWER(:login)');
+		$stmt = $dbh->prepare('UPDATE users SET realname=:realname, about_me=:aboutme WHERE LOWER(login)=LOWER(:login)');
 		debug_out("UPDATE users SET realname=$realname WHERE LOWER(login)=LOWER($login)");
 		$stmt->bindParam(':realname', $realname);
+		$stmt->bindParam(':aboutme', $aboutme);
 		$stmt->bindParam(':login', $login);
+	}
+	if (GET('pfp',false)!==false &&$_FILES["pfp"]["tmp_name"]) {
+		if (getimagesize($_FILES["pfp"]["tmp_name"])) {
+			$tmp_path = $_FILES["pfp"]["tmp_name"];
+			$tmp_ext = trim(pathinfo($tmp_path, PATHINFO_EXTENSION));
+			$tmp_name_only = pathinfo($tmp_path, PATHINFO_FILENAME) . ($tmp_ext == "" ? '' : '.' . $tmp_ext);
+			move_uploaded_file($tmp_path, '../../tmp/' . get_user_id($login));
+		} else {
+			display_error('Profile picture must be an image.',null,null,null,true);
+			return false;
+		}
 	}
 	$stmt->execute();
 	$stmt = null;
 	$dbh = null;
+	return true;
  }
 
 /*
@@ -588,6 +603,114 @@ function get_file_subcategory($file_id) {
  * Forecasts the total size of the database result set returned
  * by get_results for proper pagination
  */
+function get_user_results_count($adminonly = false, $verifiedonly = false, $search = '', $additional_items = '') {
+	$dbh = &get_db();
+	$return_val = 0;
+	$stmt = $dbh->prepare('SELECT
+			COUNT(users.id) as user_count
+		FROM users
+		WHERE '.
+		($adminonly ? 'users.is_admin=1 AND ' : '') . 
+		($verifiedonly ? 'users.is_verified=1 AND ' : '') . 
+		/*(strlen($user_id) ? 'files.user_id=:user_id' : 'true') . ' AND ' .
+		(strlen($category) ? 'categories.name=:category' : 'true') . ' AND ' .
+		(strlen($subcategory) ? 'subcategories.name=:subcategory' : 'true') . ' AND ' .*/
+		(strlen($search) ? "(users.login LIKE :search OR users.realname LIKE :search $additional_items)" : 'true')
+	);
+	
+	if (strlen($search)) { $search = "%{$search}%"; $stmt->bindParam(':search',$search); }
+		
+	if ($stmt->execute()) {
+		while ($object = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$return_val = $object['user_count'];
+			break;
+		}
+	}
+	
+	$stmt = null;
+	$dbh = null;
+	return $return_val;
+}
+
+/*
+ * Displays a table of search results, usually based on category, subcategory or search
+ * filters
+ */
+function get_user_results($adminonly = false, $verifiedonly = false, $sort = '', $search = '', $order = 'DESC') {
+	global $PAGE_SIZE;
+	global $LSP_URL;
+	$user_id = '';
+	$order = in_array(trim(strtoupper($order)), array('DESC', 'ASC')) ? trim(strtoupper($order)) : 'DESC';
+
+	$additional_items = '';
+	
+	$count = get_user_results_count($adminonly, $verifiedonly, $search, $additional_items);
+	$usersMsg = 'All Users';
+	if ($adminonly) {
+		$usersMsg = 'Admins';
+	} elseif ($verifiedonly) {
+		$usersMsg = 'Verified';
+	}
+	
+	if ($count > 0) {
+		echo '<div class="col-md-9">';
+		create_title($usersMsg,'Users','?account=browse');
+		list_profile_sort_options();
+			
+		$order_by = 'users.id';// Will order by newest and oldest
+		switch ($sort) {
+			case 'files' : $order_by = 'file_count'; break;
+		}
+		
+		$start = intval(GET('page', 0) * $PAGE_SIZE);
+		
+		$dbh = &get_db();
+		$stmt = $dbh->prepare('SELECT
+				login,
+				realname,
+				is_admin,
+				is_verified,
+				about_me,
+				users.id,
+				COUNT(files.user_id) AS file_count
+			FROM users
+				LEFT JOIN files ON files.user_id = users.id
+			WHERE ' .
+				($adminonly ? 'users.is_admin=1 AND ' : '') . 
+				($verifiedonly ? 'users.is_verified=1 AND ' : '') . 
+				(strlen($search) ? "(users.login LIKE :search OR users.realname LIKE :search $additional_items)" : 'true') . ' ' .
+			"GROUP BY users.id 
+			ORDER BY  
+				$order_by  
+				$order 
+			LIMIT 
+				$start, 
+				$PAGE_SIZE"
+		);
+		
+		if (strlen($search)) { $search = "%{$search}%"; $stmt->bindParam(':search', $search); }
+		$pagination = '<div class="text-center">' . get_pagination($count) . '</div>';
+		echo $pagination;
+		if ($stmt->execute()) {
+			echo '<table class="table table-striped">';			
+			while ($object = $stmt->fetch(PDO::FETCH_ASSOC)) {
+				show_basic_user_info($object, true);
+			}
+		}
+		echo '</table>'.$pagination.'</div>';
+	} else {
+		create_title($usersMsg,'Users','?account=browse');
+		display_info('No results found',array(),null,'x','x');
+	}
+	
+	$stmt = null;
+	$dbh = null;
+}
+
+/*
+ * Forecasts the total size of the database result set returned
+ * by get_results for proper pagination
+ */
 function get_results_count($category, $subcategory = '', $search = '', $user_id = '', $additional_items = '') {
 	$dbh = &get_db();
 	$return_val = 0;
@@ -665,6 +788,7 @@ function get_results($category, $subcategory, $sort = '', $search = '', $user_na
 				realname,
 				filename,
 				users.login,
+				users.is_verified,
 				categories.name AS category,
 				subcategories.name AS subcategory,
 				files.downloads * files.downloads /(UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(files.insert_date)) AS downloads_per_day,
@@ -801,6 +925,110 @@ function insert_category($category) {
 /*
  * File information displayed in a table row, used on most pages which show file information
  */
+function show_basic_user_info($rs, $browsing_mode = false) {
+	global $LSP_URL;
+
+	if (empty($rs['realname'])) {
+		$title = $rs['login'];
+	} else {
+		$title = $rs['login'].' ('.$rs['realname'].')';
+	}
+	if ($rs['is_verified']) {
+		$title .= ' <span class="fas fa-check"></span>';
+	} 
+	//$browsing_mode should make the image and name clickable
+	if ($browsing_mode) {
+		$href = '<a href="?account=show&user=' . $rs['login'] . '">';
+		echo '<tr><td width="100">'.$href.'<img width="100" height="100" src="download_file.php?file='.$rs['id'].'&name=pfp&type=pfp" style="border:1px solid #ddd;"></img></a></td>';
+		echo '<td>'. $href . $title . '</a>';
+	} else {
+		echo '<tr><td width="100"><img width="100" height="100" src="download_file.php?file='.$rs['id'].'&name=pfp&type=pfp" style="border:1px solid #ddd;"></img></td>';
+		echo '<td><strong>Name:</strong>&nbsp;' . $title;
+	}
+	echo '<br><strong>Files:</strong>&nbsp;' .$rs['file_count'];
+	/*echo '<br><strong>Average rating:</strong>&nbsp;';
+	$rating = $rs['rating'];
+	for ($i = 1; $i <= $rating ; ++$i) {
+		echo '<span class="fas fa-star"></span>';
+	}
+	for ($i = $rating+1; floor( $i )<=5 ; ++$i) {
+		echo '<span class="far fa-star"></span>';
+	}
+	echo '&nbsp;&nbsp;<span class=""><span class="fas fa-check-circle"></span>&nbsp;'. $rs['rating_count'].'</span>';*/
+	if ($rs['is_admin']) {
+		echo '<br><span class="fas fa-shield-alt"></span><strong>Admin account</strong>';
+	}
+	echo '</small></td></tr>';
+}
+
+/*
+ * The page which displays the profile of a user i.e. ?account=show&user=Umbreon
+ */
+function show_profile($username, $user, $success = null) {
+	global $LSP_URL, $DATA_DIR;
+	$dbh = &get_db();
+	$stmt = $dbh->prepare('SELECT
+			login,
+			realname,
+			is_admin,
+			is_verified,
+			about_me,
+			users.id,
+			COUNT(files.user_id) AS file_count
+		FROM users
+			LEFT JOIN files ON files.user_id = users.id
+		WHERE login = :username
+	');
+	$stmt->bindParam(':username', $username);
+	
+	$found = false;
+	if ($stmt->execute()) {
+		while ($object = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			if (!$object['id']) {
+				break;
+			}
+
+			echo '<div class="col-md-9">';
+			create_title($object['login'],'Users','?account=browse');
+			
+			echo '<table class="table table-striped">';
+			
+			show_basic_user_info($object);
+			
+			echo '<td><tr><td colspan="2"><div class="well"><strong>About Me:</strong><p>';
+			echo ($object['about_me'] != '' ? parse_links(htmlentities(newline_to_br($object['about_me'], true))) : 'No about available.');
+			echo '</p></div></td></tr>';
+			
+			echo '<tr><td colspan="2">';
+			echo '<nav id="lspnav" class="navbar navbar-default"><ul class="nav navbar-nav">';
+			
+			create_toolbar_item('Show files','?action=browse&user=' . urlencode(html_entity_decode($object['login'])),'far fa-fw fa-copy');
+			if (strtolower($object['login']) == strtolower($user)) {
+				create_toolbar_item('Edit Profile', "?account=settings", 'fa-pencil-alt');
+			}
+			
+			// Currently unused, could make this work at some point.
+			//echo '</ul></nav>';
+			//echo '<strong>Comments:</strong>';
+			//echo '</td></tr>';
+			//get_results('', '', '', '', GET('user'), $object['login']);
+			//get_comments($username);
+			echo'</table></div>';
+			
+			$found = true;
+			break;
+		}
+	}
+	if (!$found) {
+		display_error('Invalid user: "' . sanitize($username) . '"');
+	}
+	$stmt = null;
+	$dbh = null;
+}
+
+/*
+ * File information displayed in a table row, used on most pages which show file information
+ */
 function show_basic_file_info($rs, $browsing_mode = false, $show_author = true) {
 	global $LSP_URL;
 	$sort = GET('sort', 'date');
@@ -819,11 +1047,11 @@ function show_basic_file_info($rs, $browsing_mode = false, $show_author = true) 
 	
 	if ($show_author) {
 		if (empty($rs['realname'])) {
-			echo '<small>by <a href="' . $LSP_URL . '?action=browse&amp;user=' .
-			$rs['login'] . '">' . $rs['login'] . "</a></small><br>";
+			echo '<small>by <a href="' . $LSP_URL . '?account=show&amp;user=' .
+			$rs['login'] . '">' . $rs['login'] . ($rs['is_verified'] ? ' <span class="fas fa-check"></span>' : ''). "</a></small><br>";
 		} else {
-			echo '<small>by <a href="' . $LSP_URL . '?action=browse&amp;user=' .
-			$rs['login'] . '">' . $rs['realname'] . " (" . $rs['login'] . ")</a></small><br>";
+			echo '<small>by <a href="' . $LSP_URL . '?account=show&amp;user=' .
+			$rs['login'] . '">' . $rs['login'] . " (" . $rs['realname'] . ")".($rs['is_verified'] ? ' <span class="fas fa-check"></span>' : '')."</a></small><br>";
 		}
 	}
 
@@ -892,6 +1120,7 @@ function show_file($file_id, $user, $success = null) {
 			description,
 			downloads,
 			users.login,
+			users.is_verified,
 			files.id
 		FROM files
 			INNER JOIN categories ON categories.id = files.category
@@ -1262,6 +1491,7 @@ function get_subcategory_id($category_id, $subcategory) {
  */
 function get_user_id($login) { return get_id_by_object('users', 'login', $login); }
 function get_user_realname($login) { return get_object_by_id('users', get_user_id($login), 'realname'); }
+function get_user_about($login) { return get_object_by_id('users', get_user_id($login), 'about_me'); }
 function get_file_name($file_id){ return get_object_by_id('files', $file_id, 'filename'); }
 function get_file_owner($file_id) {	return get_object_by_id('files', $file_id, 'user_id'); }
 function get_file_description($file_id) { return get_object_by_id('files', $file_id, 'description'); }
