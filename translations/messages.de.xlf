@@ -711,15 +711,15 @@ in dieser Angelegenheit und <a href="//github.com/LMMS/lmms.io/issues/new">melde
 	volunteers in their free time. But to keep the project going, we need this
 	number to grow. So if you feel like giving something back to the community,
 	join us in making LMMS better!</source>
-        <target></target>
+        <target>LMMS ist eine freie, open-source Software, erstllt von einem kleiner Anzahl von Freiwilligen in ihrer Freizeit. Aber um das Projekt weiter Laufen zu halten, brauchen wir eine Zahl von Leuten um zu wachsen. Wenn Du das Gefühl hast der Community etwas zurückzugeben, so trete uns bei, um LMMS zu verbessern!</target>
       </trans-unit>
       <trans-unit id="9CFIxXY" resname="What you can do">
         <source>What you can do</source>
-        <target state="translated">Was du machen kannst</target>
+        <target state="translated">Was Du machen kannst</target>
       </trans-unit>
       <trans-unit id="0Y_zD6N" resname="There are multiple ways of contributing:">
         <source>There are multiple ways of contributing:</source>
-        <target state="translated">Es bestehen mehrere Wege sich zu Beteiligen:</target>
+        <target state="translated">Es gibt mehrere Wege sich zu beteiligen:</target>
       </trans-unit>
       <trans-unit id="gnURxlL" resname="Join Development">
         <source>Join Development</source>
@@ -729,7 +729,7 @@ in dieser Angelegenheit und <a href="//github.com/LMMS/lmms.io/issues/new">melde
         <source>We are in desperate need of new developers to join our team. LMMS is written in C++ using the Qt
 					   Framework, so if you know a thing or two about these, don't hesitate to get yourself dirty with
 					   coding!</source>
-        <target state="translated">Wir sind auf der verzweifelten Suche nach neuen Entwicklern für unser Team. LMMS ist in C++ geschrieben mit Qt-Framework, also wenn du ein oder zwei Dinge darüber weißt, dann zögere nicht dich mit coden zu beschmutzen!</target>
+        <target state="translated">Wir sind auf der verzweifelten Suche nach neuen Entwicklern für unser Team. LMMS ist in C++ mit dem Qt-Framework geschrieben, also wenn du ein oder zwei Dinge darüber weißt, dann zögere nicht mit zu coden und die Hände schmutzig zu machen!</target>
       </trans-unit>
       <trans-unit id="YIACglk" resname="See our &lt;a href=&quot;//github.com/LMMS/lmms/wiki&quot;&gt;GitHub Wiki&lt;/a&gt; and our&#10;&#9;&#9;&#9;&#9;&#9;   &lt;a href=&quot;//github.com/LMMS/lmms/issues&quot;&gt;bug tracker&lt;/a&gt; to get started. Furthermore, the LMMS&#10;&#9;&#9;&#9;&#9;&#9;   &lt;a href=&quot;https://lists.sourceforge.net/lists/listinfo/lmms-devel&quot;&gt;mailing list&lt;/a&gt; is a great place&#10;&#9;&#9;&#9;&#9;&#9;   to introduce yourself.">
         <source>See our &lt;a href="//github.com/LMMS/lmms/wiki"&gt;GitHub Wiki&lt;/a&gt; and our
@@ -746,37 +746,37 @@ in dieser Angelegenheit und <a href="//github.com/LMMS/lmms.io/issues/new">melde
         <source>You can help us by improving this website or documenting the software. The website sources are in our
 					   GitHub repo &lt;a href="//github.com/LMMS/lmms.io"&gt;LMMS/lmms.io&lt;/a&gt;, our documentation is hosted using a
 					   &lt;a href="//lmms.io/wiki"&gt;MediaWiki instance&lt;/a&gt;.</source>
-        <target></target>
+        <target state="translated">Du kannst uns helfen, indem du diese Webseite oder die Software dokumentierst. Der Quellcode der Webseite ist unter dem GitHub Repo &lt;a href="//github.com/LMMS/lmms.io"&gt;LMMS/lmms.io&lt;/a&gt; zu finden. Die Dokumentation nutzt eine gehostete &lt;a href="//lmms.io/wiki"&gt;MediaWiki Instanz&lt;/a&gt;. </target>
       </trans-unit>
       <trans-unit id="mxP7dw_" resname="Public registration on our Wiki is disabled due to spam issues. Please post to the&#10;&#9;&#9;&#9;&#9;&#9;   &lt;a href=&quot;https://lists.sourceforge.net/lists/listinfo/lmms-devel&quot;&gt;mailing list&lt;/a&gt; if you're&#10;&#9;&#9;&#9;&#9;&#9;   interested in helping out with the documentation!">
         <source>Public registration on our Wiki is disabled due to spam issues. Please post to the
 					   &lt;a href="https://lists.sourceforge.net/lists/listinfo/lmms-devel"&gt;mailing list&lt;/a&gt; if you're
 					   interested in helping out with the documentation!</source>
-        <target></target>
+        <target state="translated">Öffentliche Registrierung auf unserem Wiki ist aufgrund Spamvorkomnisse gesperrt. Bitte schreibe in die &lt;a href="https://lists.sourceforge.net/lists/listinfo/lmms-devel"&gt;Mailingliste&lt;/a&gt;, wenn du interessiert bist an der Dokumentation auszuhelfen.</target>
       </trans-unit>
       <trans-unit id="yR7g8nm" resname="Donate">
         <source>Donate</source>
-        <target state="translated">Unterstützen</target>
+        <target state="translated">Spenden</target>
       </trans-unit>
       <trans-unit id="LUNpyrn" resname="Even though donations are not the thing we need the most (that'd be developers), they help us pay&#10;&#9;&#9;&#9;&#9;&#9;   our bills, for our domain lmms.io for instance.">
         <source>Even though donations are not the thing we need the most (that'd be developers), they help us pay
 					   our bills, for our domain lmms.io for instance.</source>
-        <target state="translated">Auch wenn Unterstützer nicht das sind was wir am meisten benötigen (denn das wären Entwickler), Sie helfen uns unsere Rechnungen zu begleichen, für unsere Domain lmms.io zum Beispiel.</target>
+        <target state="translated">Auch wenn Spenden nicht das sind was wir am meisten benötigen (denn das wären Entwickler), helfe uns unsere Rechnungen zu begleichen, zum Beispiel für unsere Domain lmms.io.</target>
       </trans-unit>
       <trans-unit id="7yTl1LS" resname="Donate via PayPal">
         <source>Donate via PayPal</source>
-        <target state="translated">Unterstütze via PayPal</target>
+        <target state="translated">Spenden via PayPal</target>
       </trans-unit>
       <trans-unit id="JmpBuQ1" resname="Translations">
         <source>Translations</source>
-        <target state="translated">Übersetzer</target>
+        <target state="translated">Übersetzen</target>
       </trans-unit>
       <trans-unit id="ODMpVkq" resname="If your language is missing in LMMS, help the project and other users speaking the same language by&#10;&#9;&#9;&#9;&#9;&#9;   translating the software. You can find instructions on the page&#10;&#9;&#9;&#9;&#9;&#9;   &quot;&lt;a href=&quot;//github.com/LMMS/lmms/wiki/Creating-a-localization&quot;&gt;Creating a localization&lt;/a&gt;&quot; in our&#10;&#9;&#9;&#9;&#9;&#9;   GitHub Wiki.">
         <source>If your language is missing in LMMS, help the project and other users speaking the same language by
 					   translating the software. You can find instructions on the page
 					   "&lt;a href="//github.com/LMMS/lmms/wiki/Creating-a-localization"&gt;Creating a localization&lt;/a&gt;" in our
 					   GitHub Wiki.</source>
-        <target></target>
+        <target state="translated">Wenn deine Sprache in LMMS fehlt, helfe das Projekt und andere Nutzer, die die selbe Sprache sprechen, indem Du die Software übersetzt. Du kannst die Anweisungen auf der Seite "&lt;a href="//github.com/LMMS/lmms/wiki/Creating-a-localization"&gt;Creating a localization&lt;/a&gt;" in der GitHub Wiki finden. </target>
       </trans-unit>
       <trans-unit id="u6Bz942" resname="How to get in touch">
         <source>How to get in touch</source>
@@ -784,20 +784,20 @@ in dieser Angelegenheit und <a href="//github.com/LMMS/lmms.io/issues/new">melde
       </trans-unit>
       <trans-unit id="nSgPM_a" resname="Mailing List">
         <source>Mailing List</source>
-        <target state="translated">Kontakt Liste</target>
+        <target state="translated">Mailingliste</target>
       </trans-unit>
       <trans-unit id="6PT.eyE" resname="Posting to the mailing list is the best way to reach out to our developers:">
         <source>Posting to the mailing list is the best way to reach out to our developers:</source>
-        <target state="translated">Posten an die Kontakt Liste ist der beste Weg um mit unseren Entwicklern Kontakt aufzunehmen:</target>
+        <target state="translated">In die Mailingliste zu schreiben ist der beste Weg um mit unseren Entwicklern Kontakt aufzunehmen:</target>
       </trans-unit>
       <trans-unit id="vTqq2U0" resname="Subscribe to LMMS-Devel mailing list">
         <source>Subscribe to LMMS-Devel mailing list</source>
-        <target state="translated">Abboniere die LMMS-Devel Kontakt Liste</target>
+        <target state="translated">Abboniere die LMMS-Devel Mailingliste</target>
       </trans-unit>
       <trans-unit id="iSQeC4T" resname="Our IRC channel is &lt;a href=&quot;http://webchat.freenode.net/?channels=%23lmms&quot;&gt;#lmms&lt;/a&gt; on&#10;&#9;&#9;&#9;&#9;&#9;&lt;a href=&quot;https://freenode.net&quot;&gt;Freenode&lt;/a&gt;.">
         <source>Our IRC channel is &lt;a href="http://webchat.freenode.net/?channels=%23lmms"&gt;#lmms&lt;/a&gt; on
 					&lt;a href="https://freenode.net"&gt;Freenode&lt;/a&gt;.</source>
-        <target state="translated"><![CDATA[Unserer IRC Channel <a href="http://webchat.freenode.net/?channels=%23lmms"> #lmms</a>ist auf
+        <target state="translated"><![CDATA[Unserer IRC Channel <a href="http://webchat.freenode.net/?channels=%23lmms"> #lmms</a> ist auf
 					<a href="https://freenode.net">Freenode</a>.]]></target>
       </trans-unit>
       <trans-unit id="nzuqhLv" resname="&lt;a href=&quot;https://discordapp.com/&quot;&gt;Discord&lt;/a&gt;&#10;&#9;&#9;&#9;&#9;&#9;is a more modern alternative to IRC. Join our server &#10;&#9;&#9;&#9;&#9;&#9;&lt;a href=&quot;/chat/&quot;&gt;by clicking here&lt;/a&gt;.">
@@ -806,7 +806,7 @@ in dieser Angelegenheit und <a href="//github.com/LMMS/lmms.io/issues/new">melde
 					&lt;a href="/chat/"&gt;by clicking here&lt;/a&gt;.</source>
         <target state="translated"><![CDATA[<a href="https://discordapp.com/">Discord</a>
 					ist eine moderne Alternative zu IRC. Tritt unserem Server 
-					<a href="/chat/">hier</a>bei.]]></target>
+					<a href="/chat/">hier</a> bei.]]></target>
       </trans-unit>
       <trans-unit id="Tae9Qqu" resname="Forum">
         <source>Forum</source>
@@ -818,7 +818,7 @@ in dieser Angelegenheit und <a href="//github.com/LMMS/lmms.io/issues/new">melde
       </trans-unit>
       <trans-unit id="P3vlK3." resname="For reporting a bug or suggesting a new feature, please use the GitHub issue tracker:">
         <source>For reporting a bug or suggesting a new feature, please use the GitHub issue tracker:</source>
-        <target state="translated">Um einen Fehler zu melden oder Eine neue Funktion vorzuschlagen, besuche bitte unseren GitHub Fehler Tracker:</target>
+        <target state="translated">Um einen Fehler zu melden oder eine neue Funktion vorzuschlagen, besuche bitte unseren GitHub Fehler Tracker:</target>
       </trans-unit>
       <trans-unit id="laP8ZYf" resname="Author:">
         <source>Author:</source>
